@@ -1,0 +1,142 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import {
+  dict,
+  offers,
+  languages,
+  money,
+  date,
+  lowest,
+  url,
+  type Offer,
+  type Lang,
+} from "../../../lib/site";
+export function getStaticPaths() {
+  return languages.flatMap((lang) =>
+    offers.map((o) => ({ params: { lang, slug: o.slug }, props: { o } })),
+  );
+}
+const lang = Astro.params.lang as Lang,
+  t = dict[lang],
+  { o } = Astro.props as { o: Offer };
+const path = "offers/" + o.slug,
+  ask = url(lang, "contact") + "?program=" + encodeURIComponent(o.slug);
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  name: o.name[lang],
+  description: o.summary[lang],
+  image: new URL(o.photo, Astro.site).href,
+  provider: { "@id": new URL("/#agency", Astro.site).href },
+  offers: {
+    "@type": "AggregateOffer",
+    lowPrice: lowest(o),
+    priceCurrency: "MAD",
+    url: new URL(url(lang, path), Astro.site).href,
+  },
+};
+---
+
+<Layout
+  {lang}
+  {path}
+  title={o.name[lang]}
+  description={o.summary[lang]}
+  {schema}
+>
+  <div class="wrap section">
+    <a class="textlink" href={url(lang, "offers")}>
+      {t.offers}
+    </a>
+    <div class="split section">
+      <div>
+        <p class="kicker">
+          {o.type[lang]} · {o.days} {t.days}
+        </p>
+        <h1>{o.name[lang]}</h1>
+        <p>
+          {date(o.start, lang)} — {date(o.end, lang)}
+        </p>
+        {o.hijri?.[lang] && <p>{o.hijri[lang]}</p>}
+        <p>{o.summary[lang]}</p>
+        <strong class="price">
+          {t.from} {money(lowest(o), lang)} {t.currency}
+        </strong>
+        <div class="actions">
+          <a class="btn" href={ask}>
+            {t.ask}
+          </a>
+        </div>
+      </div>
+      <img class="visual" src={o.photo} width="610" height="400" alt="" />
+    </div>
+    <h2>{t.prices}</h2>
+    <div class="scroll">
+      <table>
+        <caption>{t.currency}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{t.hotel}</th>
+            {t.rooms.map((r) => (
+              <th scope="col">{r}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {o.hotels.map((h) => (
+            <tr>
+              <th scope="row">{h.label[lang]}</th>
+              {[h.double, h.triple, h.quad, h.five].map((n) => (
+                <td>{money(n, lang)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div class="split">
+      <section class="panel">
+        <h2>{t.included}</h2>
+        <ul>
+          {o.included?.map((x) => (
+            <li>{x[lang]}</li>
+          ))}
+        </ul>
+      </section>
+      <section class="panel">
+        <h2>{t.excluded}</h2>
+        {o.excluded?.length ? (
+          <ul>
+            {o.excluded.map((x) => (
+              <li>{x[lang]}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>{t.pending}</p>
+        )}
+      </section>
+    </div>
+    <section class="panel">
+      <h2>{t.itinerary}</h2>
+      {o.schedule?.length ? (
+        <ol>
+          {o.schedule.map((x) => (
+            <li>{x[lang]}</li>
+          ))}
+        </ol>
+      ) : (
+        <p>{t.pending}</p>
+      )}
+    </section>
+    <div class="actions">
+      <a class="btn" href={ask}>
+        {t.ask}
+      </a>
+      {o.flyer && (
+        <a class="textlink" href={o.flyer}>
+          {t.flyer}
+        </a>
+      )}
+    </div>
+  </div>
+</Layout>

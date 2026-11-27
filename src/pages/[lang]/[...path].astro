@@ -1,0 +1,238 @@
+---
+import homeAR from "../../content/home-ar.json";
+import homeFR from "../../content/home-fr.json";
+import Layout from "../../layouts/Layout.astro";
+import Card from "../../components/OfferCard.astro";
+import Inquiry from "../../components/Inquiry.astro";
+import voices from "../../content/reviews.json";
+import {
+  dict,
+  languages,
+  offers,
+  guides,
+  map,
+  address,
+  streetAddress,
+  postalCode,
+  email,
+  url,
+  wa,
+  type Lang,
+} from "../../lib/site";
+export function getStaticPaths() {
+  return languages.flatMap((lang) =>
+    [
+      undefined,
+      "offers",
+      "guides",
+      "contact",
+      "faq",
+      "about",
+      "imprint",
+      "terms",
+      "privacy",
+      ...guides.filter((g) => g.lang === lang).map((g) => "guides/" + g.slug),
+    ].map((path) => ({ params: { lang, path } })),
+  );
+}
+const lang = Astro.params.lang as Lang,
+  t = dict[lang],
+  path = Astro.params.path || "";
+const pages = import.meta.glob<{
+  frontmatter: { title: string };
+  Content: any;
+}>("../../content/pages/*/*.md", { eager: true });
+const doc = pages["../../content/pages/" + lang + "/" + path + ".md"];
+const guide = guides.find(
+  (g) => g.lang === lang && path === "guides/" + g.slug,
+);
+const Content = doc?.Content || guide?.Content;
+const title =
+  doc?.frontmatter.title ||
+  guide?.frontmatter.title ||
+  t[(path || "home") as "home"];
+const desc =
+  guide?.frontmatter.summary || (path ? title + " · " + t.agency : t.intro);
+const home = lang === "ar" ? homeAR : homeFR;
+const faq = home.faq.map((x) => [x.question, x.answer]);
+const schema = path
+  ? undefined
+  : {
+      "@context": "https://schema.org",
+      "@type": "TravelAgency",
+      "@id": new URL("/#agency", Astro.site).href,
+      name: t.brand,
+      url: Astro.site?.href,
+      telephone: "+212600112428",
+      email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress,
+        addressLocality: "Casablanca",
+        postalCode,
+        addressCountry: "MA",
+      },
+    };
+const reviews = voices.items as {
+  quote: Record<Lang, string>;
+  author: string;
+}[];
+const alternatives = guide
+  ? guides.filter((g) => g.slug === guide.slug).map((g) => g.lang)
+  : languages;
+---
+
+<Layout {lang} {path} {title} description={desc} {schema} {alternatives}>
+  {!path ? (
+    <>
+      <section class="hero">
+        <div class="wrap herogrid">
+          <div class="herotext">
+            <p class="kicker">{t.agency}</p>
+            <h1>{home.hero}</h1>
+            <p>{home.intro}</p>
+            <div class="actions">
+              <a class="btn" href={url(lang, "offers")}>
+                {t.offers}
+              </a>
+              <a class="textlink" href={url(lang, "contact")}>
+                {t.contact}
+              </a>
+            </div>
+          </div>
+          <img
+            class="visual"
+            width="680"
+            height="470"
+            fetchpriority="high"
+            src="/media/hero.webp"
+            alt={lang === "ar" ? "الكعبة المشرفة" : "La Kaaba à La Mecque"}
+          />
+        </div>
+      </section>
+      <div class="wrap section">
+        {offers.length > 0 && (
+          <>
+            <p class="kicker">{t.featured}</p>
+            <Card o={offers[0]} {lang} />
+          </>
+        )}
+        <div class="split section">
+          <div>
+            <h2>{home.why}</h2>
+            <p>{home.whyText}</p>
+          </div>
+          <div class="panel">
+            <h3>{t.contact}</h3>
+            <p dir="auto">{address}</p>
+            <a class="textlink" href={url(lang, "contact")}>
+              {t.contact} ↗
+            </a>
+          </div>
+        </div>
+        {voices.items.length > 0 && (
+          <section>
+            <h2>{t.reviews}</h2>
+            {reviews.map((v) => (
+              <blockquote>
+                {v.quote[lang]} — {v.author}
+              </blockquote>
+            ))}
+          </section>
+        )}
+      </div>
+    </>
+  ) : (
+    <div class="wrap section">
+      <h1>{title}</h1>
+      {path === "offers" && (
+        <>
+          <div class="split">
+            <label>
+              {t.filter}
+              <select id="kind">
+                <option value="">{t.all}</option>
+                {[...new Set(offers.map((o) => o.type[lang]))].map((k) => (
+                  <option>{k}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              {t.duration}
+              <select id="duration">
+                <option value="">{t.all}</option>
+                <option value="short">{t.short}</option>
+                <option value="long">{t.long}</option>
+              </select>
+            </label>
+          </div>
+          {offers.map((o) => (
+            <Card {o} {lang} />
+          ))}
+          <p id="empty" role="status" hidden={offers.length > 0}>
+            {t.none}
+          </p>
+        </>
+      )}
+      {path === "guides" &&
+        guides
+          .filter((g) => g.lang === lang)
+          .map((g) => (
+            <article class="panel">
+              <h2>
+                <a href={url(lang, "guides/" + g.slug)}>
+                  {g.frontmatter.title}
+                </a>
+              </h2>
+              <p>{g.frontmatter.summary}</p>
+              <a class="textlink" href={url(lang, "guides/" + g.slug)}>
+                {t.detail}
+              </a>
+            </article>
+          ))}
+      {path === "faq" &&
+        faq.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      {Content && (
+        <article class="narrow">
+          <Content />
+        </article>
+      )}
+      {path === "contact" && (
+        <div class="split">
+          <div>
+            <p dir="auto">{address}</p>
+            <div class="links">
+              <a href={"mailto:" + email}>{email}</a>
+              <a href="tel:+212708830960" dir="ltr">
+                +212 7 08 83 09 60
+              </a>
+              <a href={wa}>WhatsApp</a>
+            </div>
+            <p>
+              <a class="textlink" href={map}>
+                {t.map} ↗
+              </a>
+            </p>
+            <button class="textlink" data-settings>
+              {t.settings}
+            </button>
+            <iframe
+              hidden
+              data-map={map + "&output=embed"}
+              title={t.map}
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+          </div>
+          <Inquiry {lang} />
+        </div>
+      )}
+    </div>
+  )}
+</Layout>
+<script is:inline defer src="/filter.js"></script>

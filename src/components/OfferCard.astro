@@ -1,0 +1,26 @@
+---
+import { dict, url, money, lowest, type Offer, type Lang } from "../lib/site";
+const { o, lang } = Astro.props as { o: Offer; lang: Lang };
+const t = dict[lang];
+---
+
+<article class="card" data-offer data-type={o.type[lang]} data-days={o.days}>
+  <img src={o.photo} alt="" loading="lazy" width="420" height="260" />
+  <div class="pad">
+    <span class="kicker">
+      {o.type[lang]} · {o.days} {t.days}
+    </span>
+    <h2>
+      <a href={url(lang, "offers/" + o.slug)}>{o.name[lang]}</a>
+    </h2>
+    <p>{o.summary[lang]}</p>
+    <div class="actions">
+      <strong class="price">
+        {t.from} {money(lowest(o), lang)} {t.currency}
+      </strong>
+      <a class="textlink" href={url(lang, "offers/" + o.slug)}>
+        {t.open}
+      </a>
+    </div>
+  </div>
+</article>

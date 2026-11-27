@@ -1,0 +1,26 @@
+{
+  "name": "nusukalhouda",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/admin.mjs && astro build",
+    "preview": "astro preview",
+    "pages": "wrangler pages dev dist",
+    "cms": "decap-server",
+    "predev": "node scripts/admin.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.16.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "tailwindcss": "^4.1.0",
+    "decap-cms": "^3.8.0",
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource/tajawal": "^5.2.0"
+  },
+  "devDependencies": {
+    "decap-server": "^3.4.0",
+    "wrangler": "^4.0.0",
+    "typescript": "^5.9.0"
+  }
+}

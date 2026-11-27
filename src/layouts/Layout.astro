@@ -1,0 +1,117 @@
+---
+import "../styles/site.css";
+import { dict, url, wa, address, map, type Lang } from "../lib/site";
+const {
+  lang,
+  path = "",
+  title,
+  description,
+  schema,
+} = Astro.props as {
+  lang: Lang;
+  path?: string;
+  title: string;
+  description: string;
+  schema?: object;
+};
+const t = dict[lang],
+  other = lang === "ar" ? "fr" : "ar";
+const nav = ["offers", "guides", "about", "contact"] as const;
+const canonical = new URL(url(lang, path), Astro.site);
+const alternatives = (Astro.props as any).alternatives || ["ar", "fr"];
+---
+
+<!doctype html>
+<html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title} · {t.brand}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/media/brand.webp" />
+    <link rel="canonical" href={canonical} />
+    {alternatives.map((l: Lang) => (
+      <link
+        rel="alternate"
+        hreflang={l}
+        href={new URL(url(l, path), Astro.site)}
+      />
+    ))}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta
+      property="og:image"
+      content={new URL("/media/pilgrimage.webp", Astro.site)}
+    />
+    {schema && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify(schema).replace(/</g, "\\u003c")}
+      />
+    )}
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      {t.skip}
+    </a>
+    <header>
+      <div class="wrap bar">
+        <a href={url(lang)} class="identity">
+          <img src="/media/brand.webp" width="60" height="50" alt="" />
+          <strong>{t.brand}</strong>
+        </a>
+        <nav aria-label={t.home}>
+          {nav.map((p) => (
+            <a
+              aria-current={path === p ? "page" : undefined}
+              href={url(lang, p)}
+            >
+              {t[p]}
+            </a>
+          ))}
+        </nav>
+        <a
+          class="lang"
+          lang={other}
+          href={url(other, alternatives.includes(other) ? path : "guides")}
+        >
+          {t[other]}
+        </a>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer>
+      <div class="wrap">
+        <strong>{t.brand}</strong>
+        <p dir="auto">{address}</p>
+        <div class="links">
+          {(["faq", "contact", "imprint", "privacy", "terms"] as const).map(
+            (k) => (
+              <a href={url(lang, k)}>{t[k]}</a>
+            ),
+          )}
+          <button data-settings>{t.settings}</button>
+        </div>
+        <div class="links">
+          <a href="https://www.instagram.com/nusukalhouda/">Instagram</a>
+          <a href="https://www.facebook.com/Nusukalhouda/">Facebook</a>
+          <a href="https://www.tiktok.com/@nusukalhouda">TikTok</a>
+          <a href="tel:+212708830960">{t.call}</a>
+        </div>
+      </div>
+    </footer>
+    <a class="whatsapp" href={wa} aria-label="WhatsApp">
+      WhatsApp ↗
+    </a>
+    <aside class="consent" hidden aria-label={t.settings}>
+      <p>{t.cookies}</p>
+      <div class="links">
+        <button data-choice="yes">{t.accept}</button>
+        <button data-choice="no">{t.reject}</button>
+      </div>
+    </aside>
+    <script is:inline defer src="/consent.js"></script>
+  </body>
+</html>

@@ -1,0 +1,582 @@
+{
+  "backend": {
+    "name": "gitlab",
+    "branch": "main",
+    "auth_type": "pkce"
+  },
+  "local_backend": true,
+  "media_folder": "public/media",
+  "public_folder": "/media",
+  "locale": "de",
+  "collections": [
+    {
+      "name": "offers",
+      "label": "Reiseangebote · Séjours",
+      "folder": "src/content/offers",
+      "create": true,
+      "slug": "{{fields.slug}}",
+      "identifier_field": "title",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Interner Titel",
+          "widget": "string"
+        },
+        {
+          "name": "slug",
+          "label": "Web-Adresse (kurzer Name)",
+          "widget": "string",
+          "pattern": [
+            "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "z. B. omra-ramadan-2027"
+          ]
+        },
+        {
+          "name": "name",
+          "label": "Titel",
+          "widget": "object",
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string"
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string"
+            }
+          ]
+        },
+        {
+          "name": "summary",
+          "label": "Kurzbeschreibung",
+          "widget": "object",
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string"
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "label": "Reiseart",
+          "widget": "object",
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string"
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string"
+            }
+          ]
+        },
+        {
+          "name": "start",
+          "label": "Anreise",
+          "widget": "datetime",
+          "date_format": "YYYY-MM-DD",
+          "time_format": false,
+          "format": "YYYY-MM-DD"
+        },
+        {
+          "name": "end",
+          "label": "Abreise",
+          "widget": "datetime",
+          "date_format": "YYYY-MM-DD",
+          "time_format": false,
+          "format": "YYYY-MM-DD"
+        },
+        {
+          "name": "days",
+          "label": "Dauer in Tagen",
+          "widget": "number",
+          "value_type": "int",
+          "min": 1
+        },
+        {
+          "name": "photo",
+          "label": "Titelbild",
+          "widget": "image"
+        },
+        {
+          "name": "hijri",
+          "label": "Islamischer Kalender",
+          "widget": "object",
+          "required": false,
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string",
+              "required": false
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "name": "flyer",
+          "label": "Flyer",
+          "widget": "image",
+          "required": false
+        },
+        {
+          "name": "hotels",
+          "label": "Hoteltarife pro Person (MAD)",
+          "widget": "list",
+          "min": 1,
+          "fields": [
+            {
+              "name": "label",
+              "label": "Hotels Mekka / Medina",
+              "widget": "object",
+              "fields": [
+                {
+                  "name": "ar",
+                  "label": "العربية",
+                  "widget": "string"
+                },
+                {
+                  "name": "fr",
+                  "label": "Français",
+                  "widget": "string"
+                }
+              ]
+            },
+            {
+              "name": "double",
+              "label": "2-Bett-Zimmer",
+              "widget": "number",
+              "value_type": "int",
+              "min": 1
+            },
+            {
+              "name": "triple",
+              "label": "3-Bett-Zimmer",
+              "widget": "number",
+              "value_type": "int",
+              "min": 1
+            },
+            {
+              "name": "quad",
+              "label": "4-Bett-Zimmer",
+              "widget": "number",
+              "value_type": "int",
+              "min": 1
+            },
+            {
+              "name": "five",
+              "label": "5-Bett-Zimmer",
+              "widget": "number",
+              "value_type": "int",
+              "min": 1
+            }
+          ],
+          "summary": "{{fields.label.fr}}"
+        },
+        {
+          "name": "included",
+          "label": "Inklusive",
+          "widget": "list",
+          "required": false,
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string"
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string"
+            }
+          ]
+        },
+        {
+          "name": "excluded",
+          "label": "Exklusive",
+          "widget": "list",
+          "required": false,
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string"
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string"
+            }
+          ]
+        },
+        {
+          "name": "schedule",
+          "label": "Tagesprogramm (Tag und Beschreibung)",
+          "widget": "list",
+          "required": false,
+          "fields": [
+            {
+              "name": "ar",
+              "label": "العربية",
+              "widget": "string"
+            },
+            {
+              "name": "fr",
+              "label": "Français",
+              "widget": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "guides_ar",
+      "label": "Ratgeber ar",
+      "folder": "src/content/guides/ar",
+      "create": true,
+      "slug": "{{slug}}",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Titel",
+          "widget": "string"
+        },
+        {
+          "name": "summary",
+          "label": "Kurzbeschreibung",
+          "widget": "string"
+        },
+        {
+          "name": "body",
+          "label": "Inhalt",
+          "widget": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "pages_ar",
+      "label": "Agentur & Recht ar",
+      "files": [
+        {
+          "name": "about",
+          "label": "وكالتكم في الدار البيضاء",
+          "file": "src/content/pages/ar/about.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        },
+        {
+          "name": "imprint",
+          "label": "البيانات القانونية",
+          "file": "src/content/pages/ar/imprint.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        },
+        {
+          "name": "privacy",
+          "label": "سياسة الخصوصية",
+          "file": "src/content/pages/ar/privacy.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        },
+        {
+          "name": "terms",
+          "label": "شروط الاستخدام",
+          "file": "src/content/pages/ar/terms.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "guides_fr",
+      "label": "Ratgeber fr",
+      "folder": "src/content/guides/fr",
+      "create": true,
+      "slug": "{{slug}}",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Titel",
+          "widget": "string"
+        },
+        {
+          "name": "summary",
+          "label": "Kurzbeschreibung",
+          "widget": "string"
+        },
+        {
+          "name": "body",
+          "label": "Inhalt",
+          "widget": "markdown"
+        }
+      ]
+    },
+    {
+      "name": "pages_fr",
+      "label": "Agentur & Recht fr",
+      "files": [
+        {
+          "name": "about",
+          "label": "Votre agence à Casablanca",
+          "file": "src/content/pages/fr/about.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        },
+        {
+          "name": "imprint",
+          "label": "Mentions légales",
+          "file": "src/content/pages/fr/imprint.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        },
+        {
+          "name": "privacy",
+          "label": "Politique de confidentialité",
+          "file": "src/content/pages/fr/privacy.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        },
+        {
+          "name": "terms",
+          "label": "Conditions d’utilisation",
+          "file": "src/content/pages/fr/terms.md",
+          "fields": [
+            {
+              "name": "title",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "body",
+              "label": "Inhalt",
+              "widget": "markdown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reviews",
+      "label": "Kundenstimmen",
+      "files": [
+        {
+          "name": "voices",
+          "label": "Freigegebene Stimmen",
+          "file": "src/content/reviews.json",
+          "fields": [
+            {
+              "name": "items",
+              "label": "Stimmen",
+              "widget": "list",
+              "fields": [
+                {
+                  "name": "author",
+                  "label": "Anzeigename",
+                  "widget": "string"
+                },
+                {
+                  "name": "quote",
+                  "label": "Zitat",
+                  "widget": "object",
+                  "fields": [
+                    {
+                      "name": "ar",
+                      "label": "العربية",
+                      "widget": "string"
+                    },
+                    {
+                      "name": "fr",
+                      "label": "Français",
+                      "widget": "string"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "home",
+      "label": "Startseiten & FAQ",
+      "files": [
+        {
+          "name": "home_ar",
+          "label": "Startseite & FAQ ar",
+          "file": "src/content/home-ar.json",
+          "fields": [
+            {
+              "name": "hero",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "intro",
+              "label": "Einleitung",
+              "widget": "string"
+            },
+            {
+              "name": "why",
+              "label": "Warum wir?",
+              "widget": "string"
+            },
+            {
+              "name": "whyText",
+              "label": "Beschreibung",
+              "widget": "string"
+            },
+            {
+              "name": "faq",
+              "label": "Häufige Fragen",
+              "widget": "list",
+              "fields": [
+                {
+                  "name": "question",
+                  "label": "Frage",
+                  "widget": "string"
+                },
+                {
+                  "name": "answer",
+                  "label": "Antwort",
+                  "widget": "text"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "home_fr",
+          "label": "Startseite & FAQ fr",
+          "file": "src/content/home-fr.json",
+          "fields": [
+            {
+              "name": "hero",
+              "label": "Titel",
+              "widget": "string"
+            },
+            {
+              "name": "intro",
+              "label": "Einleitung",
+              "widget": "string"
+            },
+            {
+              "name": "why",
+              "label": "Warum wir?",
+              "widget": "string"
+            },
+            {
+              "name": "whyText",
+              "label": "Beschreibung",
+              "widget": "string"
+            },
+            {
+              "name": "faq",
+              "label": "Häufige Fragen",
+              "widget": "list",
+              "fields": [
+                {
+                  "name": "question",
+                  "label": "Frage",
+                  "widget": "string"
+                },
+                {
+                  "name": "answer",
+                  "label": "Antwort",
+                  "widget": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
