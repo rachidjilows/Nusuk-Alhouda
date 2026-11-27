@@ -68,7 +68,7 @@ export async function onRequestPost({ request, env }: Context) {
       check.action !== "inquiry"
     )
       return result(403);
-    const inbox = env.INQUIRY_TO || "jilowsrac@gmail.com";
+    const inbox = env.INQUIRY_TO || "nusuk.alhouda@gmail.com";
     const agency = {
       from: env.MAIL_FROM,
       to: [inbox],
